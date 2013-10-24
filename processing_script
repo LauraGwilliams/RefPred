@@ -1,0 +1,87 @@
+#setup space#
+
+#!/usr/bin/python
+import os
+import mne
+import eelbrain.eellab
+import mne.fiff.kit
+from eelbrain.lab import *
+
+os.environ['FREESURFER_HOME'] = '/Applications/freesurfer'
+os.environ['MNE_ROOT'] = '/Applications/MNE'
+
+
+
+
+#load the datasaet#
+
+ds = load.fiff.events('/Users/neuroscience/Documents/RefPred/SubjectsDirectory/A0008/EREF/A0008_EREF_3Oct13_analysis_01-raw.fif')
+
+# add epochs#
+
+ds_all = load.fiff.add_epochs(ds,-0.1,0.6,baseline=(None,0),reject=3e-12)
+
+#print first 10 lines#
+
+print ds[:10]
+
+
+
+#add labels to the triggers for our conditions#
+
+def label(ds):
+trigger = ds['trigger']
+    
+loc_labels = {0:'left',1:'middle',2:'right'}
+ds['side'] = Factor((trigger % 60) // 20, labels=loc_labels)
+ds['ref'] = Factor(trigger % 120 // 60, labels={0:'nref', 1:'ref'})
+ds['pred'] = Factor(trigger // 120, labels = {0:'npred',1:'pred'})
+stim_lbls = {1:'fixation',2:'pic',3:'was',4:'the',5:'adj',6:'noun',15:'question',16:'feedback',17:'feedback'}
+ds['stim'] = Factor(trigger % 20, labels=stim_lbls)
+    
+    
+    
+    
+#subset the condition of interest#
+    
+ds_adj = ds.sub("stim == 'adj'")
+ds_noun = ds.sub("stim == 'noun'")
+ds_ypred = ds.sub("pred == 'pred'")
+ds_npred = ds.sub("pred == 'npred'")
+    
+    
+## load epochs from the condition of interest ###
+
+ds_adj_epoch = load.fiff.add_epochs(ds_adj,-0.1,0.6,baseline=(None,0),reject=3e-12
+
+ds_noun_epoch = load.fiff.add_epochs(ds_noun,-0.1,0.6,baseline=(None,0),reject=3e-12)
+
+ds_npred_epoch = load.fiff.add_epochs(ds_npred,-0.1,0.6,baseline=(None,0),reject=3e-12)
+
+
+### frequency of that condition after epoch rejection ###
+
+print table.frequencies('stim',ds=ds_adj_epoch)
+
+print table.frequencies('stim',ds=ds_noun_epoch)
+
+### topo plots##
+
+plot.TopoButterfly('meg',ds=ds_adj_epoch)
+
+plot.TopoButterfly('meg',ds=ds_noun_epoch)
+
+plot.TopoButterfly('meg',ds=ds.sub("ref=='ref'"))
+    
+    
+##ttest#
+    
+kw = dict(samples=1000, tstart=0.1,tstop=0.4,tmin=0.01,pmin=0.1)
+    
+resp = testnd.ttest_ind('meg','pred','pred','npred',ds=ds_adj_epoch, **kw)
+print resp.clusters.sub("p<0.5")
+plot.TopoArray(resp)
+    
+resr = testnd.ttest_ind('meg','ref','ref','nref',ds=ds_adj_epoch, **kw)
+print resr.clusters.sub("p<0.5")
+plot.TopoArray(resr)
