@@ -20,6 +20,7 @@ ds = load.fiff.events('/Users/neuroscience/Documents/RefPred/SubjectsDirectory/A
 # add epochs#
 
 ds_all = load.fiff.add_epochs(ds,-0.1,0.6,baseline=(None,0),reject=3e-12)
+## this will take a lot of memory, might be more efficient to select events of interest before adding epochs
 
 #print first 10 lines#
 
@@ -29,7 +30,9 @@ print ds[:10]
 
 #add labels to the triggers for our conditions#
 
-def label(ds):
+#def label(ds):
+    # you need indent to define a function. But you can also just add the variables as below:
+    
 trigger = ds['trigger']
     
 loc_labels = {0:'left',1:'middle',2:'right'}
@@ -38,19 +41,21 @@ ds['ref'] = Factor(trigger % 120 // 60, labels={0:'nref', 1:'ref'})
 ds['pred'] = Factor(trigger // 120, labels = {0:'npred',1:'pred'})
 stim_lbls = {1:'fixation',2:'pic',3:'was',4:'the',5:'adj',6:'noun',15:'question',16:'feedback',17:'feedback'}
 ds['stim'] = Factor(trigger % 20, labels=stim_lbls)
-    
-    
-    
-    
+
+
+
+
 #subset the condition of interest#
     
 ds_adj = ds.sub("stim == 'adj'")
 ds_noun = ds.sub("stim == 'noun'")
 ds_ypred = ds.sub("pred == 'pred'")
+## here you are selecting all the stimuli for the +prediction trials. Is that what you intend??
 ds_npred = ds.sub("pred == 'npred'")
     
     
 ## load epochs from the condition of interest ###
+## you already loaded epochs on line 22 but you probably just want to remove line 22
 
 ds_adj_epoch = load.fiff.add_epochs(ds_adj,-0.1,0.6,baseline=(None,0),reject=3e-12
 
@@ -72,6 +77,7 @@ plot.TopoButterfly('meg',ds=ds_adj_epoch)
 plot.TopoButterfly('meg',ds=ds_noun_epoch)
 
 plot.TopoButterfly('meg',ds=ds.sub("ref=='ref'"))
+# why `ds` here?
     
     
 ##ttest#
