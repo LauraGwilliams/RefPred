@@ -1,0 +1,43 @@
+ref_pred_left_adj	185
+ref_pred_left_noun	186
+ref_npred_left_adj  65
+red_nped_left_noun  66
+nref_pred_left_adj  125
+nref_pred_left_noun 126
+npref_npred_left_adj  5
+npref_npred_left_noun 6
+
+ref_pred_middle_adj	205
+ref_pred_middle_noun	206
+ref_npred_middle_adj  85
+red_nped_middle_noun  86
+nref_pred_middle_adj  145
+nref_pred_middle_noun 146
+npref_npred_middle_adj  25
+npref_npred_middle_noun 26
+
+ref_pred_right_adj	225
+ref_pred_right_noun	226
+ref_npred_right_adj  105
+red_nped_right_noun  106
+nref_pred_right_adj  165
+nref_pred_right_noun 166
+npref_npred_right_adj  45
+npref_npred_right_noun 46
+
+left_adj	185, 125, 5, 65
+right_adj	225, 165, 45, 105
+middle_adj	205, 145, 25, 85
+
+left_noun	186, 126, 6, 66
+right_noun	226, 166, 46, 106
+middle_noun	206, 146, 26, 86
+
+ref_adj	185, 205, 225, 65, 85, 105
+nref_adj	125, 145, 165, 5, 25, 45
+pred_adj	185, 205, 225, 125, 145, 165
+npred_adj	5, 25, 45, 65, 85, 105
+
+ref_left_adj	185, 65
+ref_right_adj	225, 105
+ref_middle_adj	205, 85		
